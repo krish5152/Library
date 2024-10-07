@@ -22,7 +22,7 @@ jobs:
 
       - name: Delete branches older than 1 year
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN_1 }}  # Ensure token with 'repo' scope
+          GH_TOKEN: ${{ secrets.GH_TOKEN_2 }}  # Ensure token with 'repo' scope
         run: |
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
           
