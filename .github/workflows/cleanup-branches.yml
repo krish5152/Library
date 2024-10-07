@@ -1,14 +1,14 @@
-name: Delete Newly Created Branches
+name: Delete Old Branches
 
 on:
   schedule:
-    # Runs at 12:35 PM every day
-    - cron: '35 12 * * *'
+    # Runs every day at midnight
+    - cron: '0 0 * * *'
 
   workflow_dispatch: # Allows manual triggering of the workflow
   
 jobs:
-  delete-new-branches:
+  delete-old-branches:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,10 +20,10 @@ jobs:
       - name: Fetch all branches
         run: git fetch --all --prune
 
-      - name: Delete newly created branches (within the last day)
+      - name: Delete old branches
         run: |
-          for branch in $(git for-each-ref --sort=-committerdate refs/remotes --format='%(refname:short) %(creatordate:relative)' | grep -E 'hours|day ago' | awk '{print $1}'); do
-            if [[ $branch != "origin/main" && $branch != "origin/master" ]]; then  # Exclude main/master branches
+          for branch in $(git for-each-ref --sort=-committerdate refs/remotes --format='%(refname:short) %(committerdate:relative)' | grep 'months ago' | awk '{print $1}'); do
+            if [[ $branch != "origin/master" ]]; then  # Exclude main/master branches
               git push origin --delete ${branch#origin/}
               echo "Deleted branch: $branch"
             fi
