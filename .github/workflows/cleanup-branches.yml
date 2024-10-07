@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Git
         run: sudo apt-get install git
@@ -22,11 +22,11 @@ jobs:
 
       - name: Delete branches older than 1 year
         env:
-          GH_TOKEN: ${{ secrets.FULL_PERMISSION_PAT }}  # Use the Personal Access Token stored in Secrets
+          GH_TOKEN: ${{ secrets.FULL_PERMISSION_PAT }}  # Ensure token with 'repo' scope
         run: |
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
           
-          # Loop through the branches created more than a year ago
+          # Loop through the branches older than 1 year
           for branch in $(git for-each-ref --sort=-committerdate refs/remotes --format='%(refname:short) %(committerdate:relative)' | grep -E 'year|years ago' | awk '{print $1}'); do
             # Exclude the master branch
             if [[ $branch != "origin/master" ]]; then
