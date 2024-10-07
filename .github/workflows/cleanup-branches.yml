@@ -2,8 +2,8 @@ name: Delete Old Branches
 
 on:
   schedule:
-    # Runs every day at midnight
-    - cron: '0 0 * * *'
+    # Runs every day at 12:35 PM
+    - cron: '35 12 * * *'
 
   workflow_dispatch: # Allows manual triggering of the workflow
   
@@ -20,12 +20,15 @@ jobs:
       - name: Fetch all branches
         run: git fetch --all --prune
 
-      - name: Delete branches older than a week
+      - name: Delete branches older than 1 year
         env:
-          GH_TOKEN: ${{ secrets.FULL_PERMISSION_PAT }}  # Use the secret for authentication
+          GH_TOKEN: ${{ secrets.FULL_PERMISSION_PAT }}  # Use the Personal Access Token stored in Secrets
         run: |
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
-          for branch in $(git for-each-ref --sort=-committerdate refs/remotes --format='%(refname:short) %(committerdate:relative)' | grep -E 'week|weeks ago' | awk '{print $1}'); do
+          
+          # Loop through the branches created more than a year ago
+          for branch in $(git for-each-ref --sort=-committerdate refs/remotes --format='%(refname:short) %(committerdate:relative)' | grep -E 'year|years ago' | awk '{print $1}'); do
+            # Exclude the master branch
             if [[ $branch != "origin/master" ]]; then
               git push origin --delete ${branch#origin/}
               echo "Deleted branch: $branch"
