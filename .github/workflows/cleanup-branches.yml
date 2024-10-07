@@ -2,8 +2,8 @@ name: Delete Old Branches
 
 on:
   schedule:
-    # Runs every day at 12:35 PM
-    - cron: '35 12 * * *'
+    # Runs every day at 14:45 PM
+    - cron: '45 14 * * *'
 
   workflow_dispatch: # Allows manual triggering of the workflow
   
@@ -22,7 +22,7 @@ jobs:
 
       - name: Delete branches older than 1 year
         env:
-          GH_TOKEN: ${{ secrets.FULL_PERMISSION_PAT }}  # Ensure token with 'repo' scope
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Ensure token with 'repo' scope
         run: |
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/krish5152/Library.git
           
